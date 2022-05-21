@@ -1,0 +1,27 @@
+<meniu>
+    <produs>
+        <nume>Salam</nume>
+        <tip>Desert</tip>
+        <pret>14.99</pret>
+    </produs>
+    <produs>
+        <nume>Carnat</nume>
+        <tip>Felul 1</tip>
+        <pret>10.00</pret>
+    </produs>
+    <produs>
+        <nume>Apa de izvor</nume>
+        <tip>Bautura</tip>
+        <pret>4.99</pret>
+    </produs>
+    <produs>
+        <nume>Ciorba de salam</nume>
+        <tip>Felul 1</tip>
+        <pret>20.00</pret>
+    </produs>
+    <produs>
+        <nume>Carne de twerk</nume>
+        <tip>Felul 2</tip>
+        <pret>23.49</pret>
+    </produs>
+</meniu>

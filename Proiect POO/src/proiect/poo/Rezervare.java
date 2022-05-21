@@ -3,8 +3,6 @@ package proiect.poo;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.lang.Math;
 import static java.time.temporal.ChronoUnit.MINUTES;
 
 public class Rezervare {
@@ -16,7 +14,6 @@ public class Rezervare {
     private Masa masa;
     private PreComanda preComanda;
     Scanner input=new Scanner(System.in);
-    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static Rezervare[] rezervari = new Rezervare[50];
     private static int nrRezervari = 0;
 
@@ -26,7 +23,7 @@ public class Rezervare {
         this.data=LocalDate.EPOCH;
         this.ora=LocalTime.MIN;
         this.masa=null;
-        this.preComanda=null;
+        this.preComanda=new PreComanda();
     }
     
     public Rezervare(Persoana persoana, int nrPersoane, LocalDate data, LocalTime ora, Masa masa, PreComanda preComanda) {
@@ -39,43 +36,76 @@ public class Rezervare {
         rezervari[nrRezervari] = this;
         nrRezervari++;
     }
+    
+    public Rezervare(Persoana persoana, int nrPersoane, LocalDate data, LocalTime ora, Masa masa) {
+        this.persoana = persoana;
+        this.nrPersoane = nrPersoane;
+        this.data=data;
+        this.ora = ora;
+        this.masa = masa;
+        this.preComanda = new PreComanda();
+        rezervari[nrRezervari] = this;
+        nrRezervari++;
+    }
 
-    public boolean rezerva(Masa mese[]){
+    public boolean rezerva(Masa mese[], Meniu meniu){
         persoana.introducere();
-        System.out.println("Introduceti:\nNumarul de persoane:");
+        System.out.println("Numarul de persoane:");
         this.nrPersoane=input.nextInt();
         System.out.println("Data (zz/LL/aaaa):");
-        this.data = LocalDate.parse(input.next(), format);
+        this.data = LocalDate.parse(input.next(), ProiectPOO.format);
         System.out.println("Ora (hh:mm):");
         this.ora=LocalTime.parse(input.next());
         System.out.println("Mese valabile:");
-        int valabile=0;
+        int nevalabile[] = new int[30];
+        int nrNevalabile = 0;
+        int nrValabile=0;
         int i, j;
         System.out.println(Masa.getNrMese());
         for(i=0;i<Masa.getNrMese();i++){
             if (nrPersoane > mese[i].getLocuri()) continue;
             for (j = 0; j < nrRezervari; j++){
                 if (rezervari[j].getMasa() == mese[i]){
-                    if (rezervari[j].getData().equals(this.data) && rezervari[j].getOra().until(this.ora, MINUTES) < Math.abs(60)){
+                    if (rezervari[j].getData().equals(this.data) && Math.abs(rezervari[j].getOra().until(this.ora, MINUTES)) < 60){
+                        nevalabile[nrNevalabile] = i;
+                        nrNevalabile++;
                         break;
                     }
                 }
             }
             if (j < nrRezervari) continue;
             mese[i].afisare();
-            valabile++;
+            nrValabile++;
         }
-        if(valabile==0){
+        
+        if(nrValabile == 0){
             System.out.println("Niciuna.");
             return false;
         }
+        
         System.out.println("Introduceti numarul mesei dorite: ");
         int m=input.nextInt() - 1;
-        if(m>=Masa.getNrMese()){
+        if (m >= Masa.getNrMese()){
             System.out.println("Masa inexistenta.");
             return false;
         }
-        this.masa=mese[m];
+        
+        for (int x : nevalabile){
+            if (m == x){
+                System.out.println("Masa nu este valabila.");
+                return false;
+            }
+        }
+        this.masa = mese[m];
+        System.out.println("Doriti sa pre-comandati ceva? (y/n)");
+        switch (input.next()){
+            case "y":
+            case "Y":
+                this.preComanda.initializare(meniu);
+                break;
+            default:
+                break;
+        }
         System.out.println("Rezervare completa!");
         rezervari[nrRezervari] = this;
         nrRezervari++;
@@ -86,8 +116,10 @@ public class Rezervare {
     public void afisare(){
         System.out.println();
         persoana.afisare();
-        System.out.println("Numarul de persoane: "+this.nrPersoane+"\nData: "+this.data.format(format)+"\nOra: "+this.ora);
+        System.out.println("Numarul de persoane: "+this.nrPersoane+"\nData: "+this.data.format(ProiectPOO.format)+"\nOra: "+this.ora);
         masa.afisare();
+        if (!preComanda.isNull())
+            preComanda.afisare();
     }
     
     public void setPersoana(Persoana persoana) {
