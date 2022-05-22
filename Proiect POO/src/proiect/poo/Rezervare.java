@@ -47,6 +47,14 @@ public class Rezervare {
         rezervari[nrRezervari] = this;
         nrRezervari++;
     }
+    
+    public void setParametri(Persoana persoana, int nrPersoane, LocalDate data, LocalTime ora, Masa masa) {
+        this.persoana = persoana;
+        this.nrPersoane = nrPersoane;
+        this.data=data;
+        this.ora = ora;
+        this.masa = masa;
+    }
 
     public boolean rezerva(Masa mese[], Meniu meniu){
         persoana.introducere();
@@ -61,7 +69,6 @@ public class Rezervare {
         int nrNevalabile = 0;
         int nrValabile=0;
         int i, j;
-        System.out.println(Masa.getNrMese());
         for(i=0;i<Masa.getNrMese();i++){
             if (nrPersoane > mese[i].getLocuri()) continue;
             for (j = 0; j < nrRezervari; j++){
@@ -129,10 +136,10 @@ public class Rezervare {
         return persoana;
     }
 
-    public void setnrPersoane(int nrPersoane) {
+    public void setNrPersoane(int nrPersoane) {
         this.nrPersoane = nrPersoane;
     }
-    public int getnrPersoane() {
+    public int getNrPersoane() {
         return nrPersoane;
     }
 
@@ -160,8 +167,29 @@ public class Rezervare {
     public void setPreComanda(PreComanda preComanda) {
         this.preComanda = preComanda;
     }
+    
     public PreComanda getPreComanda() {
         return preComanda;
+    }
+    
+    public Masa[] verificaMese(Masa mese[]){
+        Masa valabile[] = new Masa[7];
+        int nrValabile = 0;
+        int i, j;
+        for(i=0;i<Masa.getNrMese();i++){
+            if (nrPersoane > mese[i].getLocuri()) continue;
+            for (j = 0; j < nrRezervari; j++){
+                if (rezervari[j].getMasa() == mese[i]){
+                    if (rezervari[j].getData().equals(this.data) && Math.abs(rezervari[j].getOra().until(this.ora, MINUTES)) < 60){
+                        break;
+                    }
+                }
+            }
+            if (j < nrRezervari) continue;
+            valabile[nrValabile] = mese[i];
+            nrValabile++;
+        }
+        return valabile;
     }
 
 }
