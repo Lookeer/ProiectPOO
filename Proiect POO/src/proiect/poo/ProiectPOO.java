@@ -64,8 +64,8 @@ public class ProiectPOO {
                         System.out.println("Nu exista rezervari.");
                         break;
                     }
-                    System.out.println("\nIntroduceti numarul rezervarii pe care doriti sa o anulati:");
                     afisareRezervari(rezervari);
+                    System.out.println("\nIntroduceti numarul rezervarii pe care doriti sa o anulati:");
                     int rez = input.nextInt() - 1;
                     if (rezervari.get(rez) == null){
                         System.out.println("Rezervarea nu exista.");
@@ -102,6 +102,7 @@ public class ProiectPOO {
         for(int i=0;i<rezervari.size();i++){
             System.out.print("-REZERVAREA " + (i + 1) + "-");
             rezervari.get(i).afisare();
+            System.out.println();
         }
     }
     
